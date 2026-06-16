@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": false,
+    "emitDecoratorMetadata": false,
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve"

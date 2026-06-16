@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ListComponent } from './mock';
 import { ReloadAfterResult } from './decorators/reload-after-result.method-decorator';
 import { DialogService } from './services/dialog/dialog.service';
@@ -9,20 +9,18 @@ import { Post } from './services/http-service/post.model';
 import { DataHandler } from './decorators/data-handler.method-decorator';
 import { FormsModule } from '@angular/forms';
 import { Clamp } from './decorators/clamp.setter-decorator';
-import {
-  Config,
-  Load,
-  Validator,
-} from './sample-decorators/decorator-transfer-data.method-decorator';
+import { TargetTransferDataDecorator, SourceTransferDataDecorator } from './decorators/transfer-data.decorator';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   imports: [FormsModule],
 })
-export class AppComponent extends ListComponent<Post> {
+export class AppComponent extends ListComponent<Post> implements OnInit {
   private readonly dialogService = inject(DialogService);
   private readonly postService = inject(PostService);
+
+  accessor fullName = '';
 
   private _rangeValue = 10;
 
@@ -34,6 +32,10 @@ export class AppComponent extends ListComponent<Post> {
   set rangeValue(value: number) {
     this._rangeValue = value;
     this.loadAll(true);
+  }
+
+  ngOnInit(): void {
+    console.log('[AppComponent]: Run method data', this.run);
   }
 
   @ReloadAfterResult
@@ -52,10 +54,9 @@ export class AppComponent extends ListComponent<Post> {
   @DataHandler
   loadAll = (force?: boolean): Observable<Post[]> => this.postService.getPosts();
 
-  @Config(10)
-  @Validator('required')
-  @Load
-  transferData() {
-    console.log('transferData called');
+  @TargetTransferDataDecorator()
+  @SourceTransferDataDecorator('Hello from Producer')
+  run() {
+    console.log('method executed');
   }
 }
